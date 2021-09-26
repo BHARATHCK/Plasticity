@@ -1,8 +1,0 @@
-{
-    "extends": [ 
-      "wesbos",
-      "plugin:react/recommended",
-      "plugin:prettier/recommended",
-      "plugin:react/jsx-runtime"
-    ]
-  }
