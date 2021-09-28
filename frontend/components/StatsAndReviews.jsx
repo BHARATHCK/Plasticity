@@ -1,4 +1,9 @@
-import { HeartIcon, UserGroupIcon } from '@heroicons/react/outline';
+import {
+  HeartIcon,
+  UserGroupIcon,
+  CalendarIcon,
+  LibraryIcon,
+} from '@heroicons/react/outline';
 
 function StatsAndReviews() {
   return (
@@ -14,12 +19,12 @@ function StatsAndReviews() {
             <p className="">Members</p>
           </div>
           <div className="m-5 flex flex-col sm:flex-col items-center space-x-0">
-            <UserGroupIcon className="w-5 sm:w-12" />
+            <LibraryIcon className="w-5 sm:w-12" />
             <p className="">2,500 +</p>
             <p className="">Schools and colleges accross india</p>
           </div>
           <div className="m-5 flex flex-col sm:flex-col items-center space-x-0">
-            <UserGroupIcon className="w-5 sm:w-12" />
+            <CalendarIcon className="w-5 sm:w-12" />
             <p className="">200 +</p>
             <p className="">Free events</p>
           </div>
