@@ -1,76 +1,58 @@
 const dotenv = require("dotenv").config();
 const { Keystone } = require('@keystonejs/keystone');
 const { PasswordAuthStrategy } = require('@keystonejs/auth-password');
-const { Text, Checkbox, Password } = require('@keystonejs/fields');
 const { GraphQLApp } = require('@keystonejs/app-graphql');
 const { AdminUIApp } = require('@keystonejs/app-admin-ui');
-const initialiseData = require('./initial-data');
 
 const { MongooseAdapter: Adapter } = require('@keystonejs/adapter-mongoose');
 const PROJECT_NAME = 'backend';
-console.log("URI : ", process.env.DB_URL)
+
 const adapterConfig = { mongoUri: process.env.DB_URL };
 
+const PostSchema = require('./src/lists/Post');
+const UserSchema = require('./src/lists/User');
 
 const keystone = new Keystone({
     adapter: new Adapter(adapterConfig),
     cookieSecret: process.env.COOKIE_SECRET,
-    onConnect: process.env.CREATE_TABLES !== 'true' && initialiseData,
 });
 
 // Access control functions
 const userIsAdmin = ({ authentication: { item: user } }) => Boolean(user && user.isAdmin);
-const userOwnsItem = ({ authentication: { item: user } }) => {
+const userIsLoggedIn = ({ authentication: { item: user } }) => {
     if (!user) {
         return false;
     }
-
-    // Instead of a boolean, you can return a GraphQL query:
-    // https://www.keystonejs.com/api/access-control#graphqlwhere
-    return { id: user.id };
+    return true;
 };
 
-const userIsAdminOrOwner = auth => {
-    const isAdmin = access.userIsAdmin(auth);
-    const isOwner = access.userOwnsItem(auth);
-    return isAdmin ? isAdmin : isOwner;
-};
-
-const access = { userIsAdmin, userOwnsItem, userIsAdminOrOwner };
-
-keystone.createList('User', {
-    fields: {
-        name: { type: Text },
-        email: {
-            type: Text,
-            isUnique: true,
-        },
-        isAdmin: {
-            type: Checkbox,
-            // Field-level access controls
-            // Here, we set more restrictive field access so a non-admin cannot make themselves admin.
-            access: {
-                update: access.userIsAdmin,
-            },
-        },
-        password: {
-            type: Password,
-        },
-    },
-    // List-level access controls
+keystone.createList('Post', {
+    fields: PostSchema.fields,
     access: {
-        read: access.userIsAdminOrOwner,
-        update: access.userIsAdminOrOwner,
-        create: access.userIsAdmin,
-        delete: access.userIsAdmin,
-        auth: true,
-    },
+        read: true,
+        create: userIsLoggedIn,
+        update: userIsLoggedIn,
+        delete: userIsLoggedIn
+    }
+});
+keystone.createList('User', {
+    fields: UserSchema.fields,
+    access: {
+        read: userIsLoggedIn,
+        create: userIsLoggedIn,
+        update: userIsLoggedIn,
+        delete: userIsLoggedIn
+    }
 });
 
 const authStrategy = keystone.createAuthStrategy({
     type: PasswordAuthStrategy,
     list: 'User',
-    config: { protectIdentities: process.env.NODE_ENV === 'production' },
+    config: {
+        protectIdentities: process.env.NODE_ENV === 'production',
+        identityField: 'email',
+        secretField: 'password'
+    },
 });
 
 module.exports = {
@@ -81,6 +63,14 @@ module.exports = {
             name: PROJECT_NAME,
             enableDefaultRoute: true,
             authStrategy,
+            isAccessAllowed: ({ authentication: { item: user } }) => {
+                console.log(user);
+                return !!user && !!user.isAdmin
+            },
         }),
     ],
+    statelessSessions: {
+        maxAge: 60 * 60 * 24 * 360,
+        secret: process.env.COOKIE_SECRET,
+    }
 };
