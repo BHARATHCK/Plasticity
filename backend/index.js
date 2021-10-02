@@ -9,8 +9,9 @@ const PROJECT_NAME = 'backend';
 
 const adapterConfig = { mongoUri: process.env.DB_URL };
 
-const PostSchema = require('./src/lists/Post');
+const CourseSchema = require('./src/lists/Course');
 const UserSchema = require('./src/lists/User');
+const CourseVideoSchema = require('./src/lists/CourseVideo');
 
 const keystone = new Keystone({
     adapter: new Adapter(adapterConfig),
@@ -26,8 +27,8 @@ const userIsLoggedIn = ({ authentication: { item: user } }) => {
     return true;
 };
 
-keystone.createList('Post', {
-    fields: PostSchema.fields,
+keystone.createList('Course', {
+    fields: CourseSchema.fields,
     access: {
         read: true,
         create: userIsLoggedIn,
@@ -37,6 +38,16 @@ keystone.createList('Post', {
 });
 keystone.createList('User', {
     fields: UserSchema.fields,
+    access: {
+        read: true,
+        create: true,
+        update: userIsLoggedIn,
+        delete: userIsLoggedIn
+    }
+});
+
+keystone.createList('CourseVideo', {
+    fields: CourseVideoSchema.fields,
     access: {
         read: userIsLoggedIn,
         create: userIsLoggedIn,
