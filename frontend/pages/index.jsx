@@ -6,8 +6,6 @@ import Header from '../components/Header';
 import ProductPlacement from '../components/ProductPlacement';
 import ReveiwCardComponent from '../components/ReveiwCardComponent';
 import StatsAndReviews from '../components/StatsAndReviews';
-import Wrapper from '../components/Wrapper';
-import explore from './explore';
 
 export default function Home() {
   return (

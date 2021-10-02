@@ -5,13 +5,16 @@ function ReveiwCardComponent() {
   return (
     <div className="bg-custom-white">
       <div className="m-5 grid grid-cols-1 sm:grid-cols-2 gap-4 place-items-center mt-20">
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((element) => (
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((element, index) => (
           <>
-            <div className="relative max-w-md min-w-min border-2">
+            <div className="relative max-w-md min-w-min border-2" key={index}>
               <div className="absolute -left-5 -top-4 z-50">
                 <AnnotationIcon className="w-5 sm:w-12 stroke-current text-purple-600" />
               </div>
-              <div className="flex flex-col sm:flex-row items-center justify-center space-x-6 m-4">
+              <div
+                className="flex flex-col sm:flex-row items-center justify-center space-x-6 m-4"
+                key={index + 10}
+              >
                 <div className="flex flex-col items-center justify-center">
                   <Image
                     width="100px"

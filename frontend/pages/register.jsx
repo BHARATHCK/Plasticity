@@ -6,43 +6,44 @@ import gql from 'graphql-tag';
 import { useMutation } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
 
-const SIGNIN_MUTATION = gql`
-  mutation SIGNIN_MUTATION($email: String!, $password: String!) {
-    authenticateUserWithPassword(email: $email, password: $password) {
-      ... on authenticateUserOutput {
-        item {
-          id
-          email
-          name
-        }
-      }
+const REGISTER_MUTATION = gql`
+  mutation REGISTER_MUTATION(
+    $name: String!
+    $email: String!
+    $password: String!
+  ) {
+    createUser(
+      data: { name: $name, password: $password, email: $email, isAdmin: false }
+    ) {
+      id
+      name
+      email
     }
   }
 `;
 
-function Login() {
+function Register() {
   const router = useRouter();
   const { clearForm, inputs, handleChange, resetForm } = useForm({
-    username: '',
+    name: '',
     email: '',
     password: '',
   });
 
-  const [signin, { data, error, loading }] = useMutation(SIGNIN_MUTATION, {
+  const [signup, { data, error, loading }] = useMutation(REGISTER_MUTATION, {
     variables: inputs,
-    refetchQueries: [{ query: CURRENT_USER_QUERY }],
   });
 
   if (data) {
-    router.push('/');
+    router.push('/login');
   }
 
   async function handleSubmit(e) {
-    e.preventDefault(); // stop the form from submitting
+    e.preventDefault();
     console.log(inputs);
     let res = '';
     try {
-      res = await signin();
+      res = await signup();
     } catch (err) {
       res = err;
     }
@@ -64,6 +65,24 @@ function Login() {
               ) : (
                 ''
               )}
+              <div className="mb-4">
+                <label
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                  htmlFor="username"
+                >
+                  Username
+                  <input
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="name"
+                    name="name"
+                    type="username"
+                    placeholder="Username"
+                    autoComplete="name"
+                    value={inputs.name}
+                    onChange={handleChange}
+                  />
+                </label>
+              </div>
               <div className="mb-4">
                 <label
                   className="block text-gray-700 text-sm font-bold mb-2"
@@ -107,14 +126,8 @@ function Login() {
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                   type="submit"
                 >
-                  Sign In
+                  Register
                 </button>
-                <a
-                  className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
-                  href="#"
-                >
-                  Forgot Password?
-                </a>
               </div>
             </fieldset>
           </form>
@@ -127,4 +140,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Register;
