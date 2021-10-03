@@ -3,13 +3,13 @@
 
 - [x] Core Flow (login/register -> explore courses -> play courses).
 - [x] Forgot password/ Reset password.
-- [ ] Subscriptions (include subscriptions along with login/regiter permissions -> can only access subscribed courses).
-- [ ] Stripe Payment integration.
-- [ ] Test all pages for mobile friendliness.
-- [ ] NodeMailer mail setup.
+- [x] Subscriptions (include subscriptions along with login/regiter permissions -> can only access subscribed courses).
+- [x] Stripe Payment integration.
+- [x] Test all pages for mobile friendliness.
+- [x] NodeMailer mail setup.
 - [ ] Comment/rating feature implementation.
 - [ ] Community Feature with live streaming rooms.
-- [ ] Test every path for Auth (API Should be protected).
+- [x] Test every path for Auth (API Should be protected).
 
 
 ## Tech Stack
