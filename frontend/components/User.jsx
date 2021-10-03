@@ -9,6 +9,13 @@ export const CURRENT_USER_QUERY = gql`
         name
         email
         isEducator
+        isSubscribed
+        subscription {
+          id
+          price
+          plan
+          chargeId
+        }
       }
     }
   }
@@ -16,6 +23,5 @@ export const CURRENT_USER_QUERY = gql`
 
 export function useUser() {
   const { data } = useQuery(CURRENT_USER_QUERY);
-  console.log('DATA -------------> ', data);
   return data?.authenticatedItem;
 }

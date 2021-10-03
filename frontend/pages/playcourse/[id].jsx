@@ -5,6 +5,8 @@ import Wrapper from '../../components/Wrapper';
 import { PlayIcon } from '@heroicons/react/outline';
 import gql from 'graphql-tag';
 import { useQuery } from '@apollo/client';
+import Subscribe from '../../components/Subscribe';
+import { useUser } from '../../components/User';
 
 const COURSE_DETAILS = gql`
   query COURSE_QUERY($id: ID!) {
@@ -30,6 +32,7 @@ const COURSE_DETAILS = gql`
 `;
 
 function PlayCourse() {
+  const user = useUser();
   const [videoUrl, setVideoUrl] = useState('');
   const [playing, setPlaying] = useState(false);
   const router = useRouter();
@@ -38,6 +41,10 @@ function PlayCourse() {
 
   if (router.isReady && router.query.id === undefined) {
     router.push('/login');
+  }
+
+  if (user.isSubscribed === 'false' && user.subscription === null) {
+    router.push('/pricing');
   }
 
   const { data, loading, error } = useQuery(COURSE_DETAILS, {
