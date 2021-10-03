@@ -2,7 +2,7 @@
 
 
 - [x] Core Flow (login/register -> explore courses -> play courses).
-- [ ] Forgot password/ Reset password.
+- [x] Forgot password/ Reset password.
 - [ ] Subscriptions (include subscriptions along with login/regiter permissions -> can only access subscribed courses).
 - [ ] Stripe Payment integration.
 - [ ] Test all pages for mobile friendliness.

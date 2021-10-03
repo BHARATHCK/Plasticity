@@ -6,9 +6,7 @@ import { useRouter } from 'next/dist/client/router';
 
 const SIGN_OUT_MUTATION = gql`
   mutation SIGN_OUT_MUTATION {
-    unauthenticateUser {
-      success
-    }
+    endSession
   }
 `;
 

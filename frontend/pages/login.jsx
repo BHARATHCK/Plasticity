@@ -5,16 +5,21 @@ import useForm from '../utils/useForm';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
+import NextLink from 'next/link';
 
 const SIGNIN_MUTATION = gql`
   mutation SIGNIN_MUTATION($email: String!, $password: String!) {
     authenticateUserWithPassword(email: $email, password: $password) {
-      ... on authenticateUserOutput {
+      ... on UserAuthenticationWithPasswordSuccess {
         item {
           id
           email
           name
         }
+      }
+      ... on UserAuthenticationWithPasswordFailure {
+        code
+        message
       }
     }
   }
@@ -33,7 +38,13 @@ function Login() {
     refetchQueries: [{ query: CURRENT_USER_QUERY }],
   });
 
-  if (data) {
+  const customError =
+    data?.authenticateUserWithPassword.__typename ===
+    'UserAuthenticationWithPasswordFailure'
+      ? data?.authenticateUserWithPassword
+      : undefined;
+
+  if (data?.authenticateUserWithPassword?.id) {
     router.push('/');
   }
 
@@ -59,8 +70,10 @@ function Login() {
             onSubmit={handleSubmit}
           >
             <fieldset>
-              {error ? (
-                <p className="text-red-500 text-xs italic">{error.message}</p>
+              {customError ? (
+                <p className="text-red-500 text-xs italic">
+                  {customError.message}
+                </p>
               ) : (
                 ''
               )}
@@ -109,12 +122,11 @@ function Login() {
                 >
                   Sign In
                 </button>
-                <a
-                  className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
-                  href="#"
-                >
-                  Forgot Password?
-                </a>
+                <NextLink href="/forgotpassword">
+                  <a className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
+                    Forgot Password?
+                  </a>
+                </NextLink>
               </div>
             </fieldset>
           </form>

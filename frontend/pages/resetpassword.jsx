@@ -1,46 +1,47 @@
-import React, { useState } from 'react';
-import { CURRENT_USER_QUERY } from '../components/User';
-import Wrapper from '../components/Wrapper';
-import useForm from '../utils/useForm';
+import React from 'react';
 import gql from 'graphql-tag';
-import { useMutation } from '@apollo/client';
 import { useRouter } from 'next/dist/client/router';
+import useForm from '../utils/useForm';
+import Wrapper from '../components/Wrapper';
+import { useMutation } from '@apollo/client';
 
-const REGISTER_MUTATION = gql`
-  mutation SIGNUP_MUTATION(
+const REDEEM_USER_PASSWORD = gql`
+  mutation REDEEM_USER_PASSWORD(
     $email: String!
-    $name: String!
+    $token: String!
     $password: String!
   ) {
-    createUser(
-      data: {
-        email: $email
-        name: $name
-        password: $password
-        isEducator: false
-      }
+    redeemUserPasswordResetToken(
+      email: $email
+      token: $token
+      password: $password
     ) {
-      id
-      email
-      name
+      code
+      message
     }
   }
 `;
 
-function Register() {
+function ResetPassword(props) {
   const router = useRouter();
+
+  console.log(props.query.token);
+
   const { clearForm, inputs, handleChange, resetForm } = useForm({
-    name: '',
     email: '',
+    token: props.query.token,
     password: '',
   });
 
-  const [signup, { data, error, loading }] = useMutation(REGISTER_MUTATION, {
-    variables: inputs,
-  });
+  const [restPassword, { data, loading, error }] = useMutation(
+    REDEEM_USER_PASSWORD,
+    {
+      variables: inputs,
+    }
+  );
 
-  if (data) {
-    router.push('/login');
+  if (!props?.query?.token) {
+    return <p>Sorry! You need token to reset the password.</p>;
   }
 
   async function handleSubmit(e) {
@@ -48,7 +49,7 @@ function Register() {
     console.log(inputs);
     let res = '';
     try {
-      res = await signup();
+      res = await restPassword();
     } catch (err) {
       res = err;
     }
@@ -58,36 +59,28 @@ function Register() {
   return (
     <Wrapper>
       <div className="flex flex-col items-center">
-        <div className="w-full max-w-xs">
+        <div className="w-full max-w-md">
           <form
             className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
             method="POST"
             onSubmit={handleSubmit}
           >
             <fieldset>
-              {error ? (
-                <p className="text-red-500 text-xs italic">{error.message}</p>
+              {data?.redeemUserPasswordResetToken ? (
+                <p className="text-red-500 text-base italic">
+                  {data?.redeemUserPasswordResetToken?.code}
+                </p>
               ) : (
                 ''
               )}
-              <div className="mb-4">
-                <label
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                  htmlFor="username"
-                >
-                  Username
-                  <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="name"
-                    name="name"
-                    type="username"
-                    placeholder="Username"
-                    autoComplete="name"
-                    value={inputs.name}
-                    onChange={handleChange}
-                  />
-                </label>
-              </div>
+
+              {data?.redeemUserPasswordResetToken === null ? (
+                <p className="text-green-600 text-lg italic mb-5">
+                  Password Successfully Changed
+                </p>
+              ) : (
+                ''
+              )}
               <div className="mb-4">
                 <label
                   className="block text-gray-700 text-sm font-bold mb-2"
@@ -101,7 +94,7 @@ function Register() {
                     type="email"
                     placeholder="Email"
                     autoComplete="email"
-                    value={inputs.email}
+                    value={inputs.name}
                     onChange={handleChange}
                   />
                 </label>
@@ -125,24 +118,19 @@ function Register() {
                   {/*  */}
                 </label>
               </div>
-              <div className="flex items-center justify-between">
-                <button
-                  disabled={loading}
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  type="submit"
-                >
-                  Register
-                </button>
-              </div>
+              <button
+                disabled={loading}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                type="submit"
+              >
+                Reset Password
+              </button>
             </fieldset>
           </form>
-          <p className="text-center text-gray-500 text-xs">
-            &copy;2020 Plasticity. All rights reserved.
-          </p>
         </div>
       </div>
     </Wrapper>
   );
 }
 
-export default Register;
+export default ResetPassword;
