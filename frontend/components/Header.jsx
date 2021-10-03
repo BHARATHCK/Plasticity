@@ -12,7 +12,7 @@ import { useUser } from './User';
 
 function Header() {
   const user = useUser();
-  console.log(user);
+  console.log('User --> ', user);
   return (
     <header className="flex flex-col sm:flex-row justify-between">
       <div className="flex flex-row items-center">

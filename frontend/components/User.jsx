@@ -3,16 +3,19 @@ import gql from 'graphql-tag';
 
 export const CURRENT_USER_QUERY = gql`
   query CURRENT_USER {
-    authenticatedUser {
-      name
-      id
-      email
-      isAdmin
+    authenticatedItem {
+      ... on User {
+        id
+        name
+        email
+        isEducator
+      }
     }
   }
 `;
 
 export function useUser() {
   const { data } = useQuery(CURRENT_USER_QUERY);
-  return data?.authenticatedUser;
+  console.log('DATA -------------> ', data);
+  return data?.authenticatedItem;
 }

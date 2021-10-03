@@ -8,7 +8,7 @@ import NextLink from 'next/link';
 
 const COURSE_DETAILS = gql`
   query COURSE_QUERY($id: ID!) {
-    Course(where: { id: $id }) {
+    course(where: { id: $id }) {
       id
       title
       description
@@ -20,7 +20,7 @@ const COURSE_DETAILS = gql`
       thumbnail
       Videos {
         video {
-          publicUrl
+          filename
         }
         description
         thumbnail
@@ -51,7 +51,7 @@ function TakeCourse() {
           <div>
             <NextImage
               src={
-                data?.Course?.thumbnail ||
+                data?.course?.thumbnail ||
                 'https://picsum.photos/seed/picsum/200/300'
               }
               alt="thumbnail of a course"
@@ -60,13 +60,13 @@ function TakeCourse() {
             />
           </div>
           <div className="flex flex-col space-y-4">
-            <div>{data?.Course?.title}</div>
+            <div>{data?.course?.title}</div>
             <div className="flex flex-row space-x-2">
               <div>{new Date().toISOString()}</div>
-              <div>{data?.Course?.category}</div>
+              <div>{data?.course?.category}</div>
             </div>
-            <div>{data?.Course?.description}</div>
-            <NextLink href={`/playcourse/${data?.Course?.id}`}>
+            <div>{data?.course?.description}</div>
+            <NextLink href={`/playcourse/${data?.course?.id}`}>
               <button className="bg-black text-white font-bold py-2 px-4 rounded">
                 Play
               </button>
@@ -75,15 +75,16 @@ function TakeCourse() {
         </div>
         <div className="flex flex-col space-y-4 mt-10 sm:w-4/6 sm:p-10">
           <p className="text-lg font-semibold">Course Overview</p>
-          {data?.Course?.Videos.map((video, index) => (
-            <NextLink href={video.video.publicUrl} key={index}>
-              <div className="flex flex-col border-2 shadow-md cursor-pointer">
-                <div className="flex flex-row items-center space-x-4">
-                  <p>{index + 1}</p>
-                  <div>{video.description}</div>
-                </div>
+          {data?.course?.Videos.map((video, index) => (
+            <div
+              className="flex flex-col border-2 shadow-md cursor-pointer"
+              key={index}
+            >
+              <div className="flex flex-row items-center space-x-4">
+                <p>{index + 1}</p>
+                <div>{video.description}</div>
               </div>
-            </NextLink>
+            </div>
           ))}
         </div>
       </div>

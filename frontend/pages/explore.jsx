@@ -6,7 +6,7 @@ import CourseCard from '../components/CourseCard';
 
 const ALL_COURSES_QUERY = gql`
   query ALL_COURSES_QUERY {
-    allCourses {
+    courses {
       id
       title
       description
@@ -26,7 +26,7 @@ function Explore() {
   return (
     <Wrapper>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 justify-items-center mb-20">
-        {data?.allCourses.map((course) => (
+        {data?.courses.map((course) => (
           <CourseCard
             key={course.id}
             author={course.author.name}

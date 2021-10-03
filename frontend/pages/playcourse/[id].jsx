@@ -8,7 +8,7 @@ import { useQuery } from '@apollo/client';
 
 const COURSE_DETAILS = gql`
   query COURSE_QUERY($id: ID!) {
-    Course(where: { id: $id }) {
+    course(where: { id: $id }) {
       id
       title
       description
@@ -20,7 +20,6 @@ const COURSE_DETAILS = gql`
       thumbnail
       Videos {
         video {
-          publicUrl
           filename
         }
         description
@@ -48,11 +47,14 @@ function PlayCourse() {
   });
 
   useEffect(() => {
-    if (data?.Course) {
+    if (data?.course) {
       console.log('Setting the video URL');
       setVideoUrl(
         process.env.NEXT_PUBLIC_S3_PUBLIC_URL +
-          data?.Course?.Videos[0].video.filename
+          data?.course?.Videos[0].video.filename.substring(
+            0,
+            data?.course?.Videos[0].video.filename.indexOf('mp4') + 3
+          )
       );
     }
   }, [data]);
@@ -80,13 +82,16 @@ function PlayCourse() {
         <div className="sm:absolute sm:right-0 sm:w-2/4">
           <div>
             <div className="flex flex-col space-y-4 mt-10 w-4/6 ml-20 overflow-y-scroll">
-              {data?.Course?.Videos.map((video, index) => (
+              {data?.course?.Videos.map((video, index) => (
                 <div
                   key={index}
                   onClick={(e) => {
                     setVideoUrl(
                       process.env.NEXT_PUBLIC_S3_PUBLIC_URL +
-                        video.video.filename
+                        video.video.filename.substring(
+                          0,
+                          video.video.filename.indexOf('mp4') + 3
+                        )
                     );
                   }}
                 >
