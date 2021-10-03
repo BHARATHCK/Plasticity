@@ -10,3 +10,16 @@
 - [ ] Comment/rating feature implementation.
 - [ ] Community Feature with live streaming rooms.
 - [ ] Test every path for Auth (API Should be protected).
+
+
+## Tech Stack
+
+- NextJS.
+- Tailwind CSS
+- Apollo Client.
+- ~~KeystoneJS v5~~ KeyStoneJS v6.
+- Postgres.
+- Amazon S3.
+- Stripe Payments.
+- NodeMailer.
+- Powered by Heroku.
