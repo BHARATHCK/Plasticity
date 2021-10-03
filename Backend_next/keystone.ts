@@ -3,11 +3,13 @@ import { statelessSessions } from '@keystone-next/keystone/session';
 import { lists } from './schema';
 import { createAuth } from '@keystone-next/auth';
 import { Course } from './src/lists/Course';
+import {Subscription} from "./src/lists/Subscription";
 import { User } from './src/lists/User';
 import { CourseVideo } from './src/lists/CourseVideo';
 import { v4 as uuidv4 } from 'uuid';
 import 'dotenv/config';
 import {sendEmail} from "./src/utils/sendMail";
+import {extendGraphqlSchema} from "./src/mutations";
 
 const databaseURL = process.env.DB_URL || 'mongodb://localhost/keystone-sick-fits-tutorial';
 
@@ -50,8 +52,10 @@ export default withAuth(
           // Schema items go in here
           User,
           CourseVideo,
-          Course
+          Course,
+          Subscription
       }),
+      extendGraphqlSchema,
       ui: {
           // Show the UI only for poeple who pass this test
           isAccessAllowed: ({ session }) =>

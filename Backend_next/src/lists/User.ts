@@ -16,6 +16,18 @@ export const User = {
         isEducator: checkbox({
             defaultValue: false
 
+        }),
+        isSubscribed: select({
+            dataType: 'string',
+            options: [
+                { value: 'true', label: 'true' },
+                { value: 'false', label: 'false' },
+            ],
+            defaultValue: 'false',
+            ui: { displayMode: 'segmented-control' }
+        }),
+        subscription: relationship({
+            ref: 'Subscription.user'
         })
     }
 }

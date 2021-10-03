@@ -2,6 +2,7 @@
 # Modify your Keystone config when you want to change this.
 
 type Mutation {
+  checkout(token: String!): Boolean
   sendUserPasswordResetLink(email: String!): SendUserPasswordResetLinkResult
   redeemUserPasswordResetToken(
     email: String!
@@ -36,6 +37,15 @@ type Mutation {
   updateCourses(data: [CourseUpdateArgs!]!): [Course]
   deleteCourse(where: CourseWhereUniqueInput!): Course
   deleteCourses(where: [CourseWhereUniqueInput!]!): [Course]
+  createSubscription(data: SubscriptionCreateInput!): Subscription
+  createSubscriptions(data: [SubscriptionCreateInput!]!): [Subscription]
+  updateSubscription(
+    where: SubscriptionWhereUniqueInput!
+    data: SubscriptionUpdateInput!
+  ): Subscription
+  updateSubscriptions(data: [SubscriptionUpdateArgs!]!): [Subscription]
+  deleteSubscription(where: SubscriptionWhereUniqueInput!): Subscription
+  deleteSubscriptions(where: [SubscriptionWhereUniqueInput!]!): [Subscription]
   endSession: Boolean!
 }
 
@@ -105,6 +115,8 @@ type User {
   password: PasswordState
   email: String
   isEducator: Boolean
+  isSubscribed: String
+  subscription: Subscription
   passwordResetToken: PasswordState
   passwordResetIssuedAt: String
   passwordResetRedeemedAt: String
@@ -186,9 +198,17 @@ input UserUpdateInput {
   password: String
   email: String
   isEducator: Boolean
+  isSubscribed: String
+  subscription: SubscriptionRelateToOneForUpdateInput
   passwordResetToken: String
   passwordResetIssuedAt: String
   passwordResetRedeemedAt: String
+}
+
+input SubscriptionRelateToOneForUpdateInput {
+  create: SubscriptionCreateInput
+  connect: SubscriptionWhereUniqueInput
+  disconnect: Boolean
 }
 
 input UserUpdateArgs {
@@ -201,9 +221,16 @@ input UserCreateInput {
   password: String
   email: String
   isEducator: Boolean
+  isSubscribed: String
+  subscription: SubscriptionRelateToOneForCreateInput
   passwordResetToken: String
   passwordResetIssuedAt: String
   passwordResetRedeemedAt: String
+}
+
+input SubscriptionRelateToOneForCreateInput {
+  create: SubscriptionCreateInput
+  connect: SubscriptionWhereUniqueInput
 }
 
 type CourseVideo {
@@ -369,6 +396,48 @@ input CourseVideoRelateToManyForCreateInput {
   connect: [CourseVideoWhereUniqueInput!]
 }
 
+type Subscription {
+  id: ID!
+  price: Int
+  plan: String
+  chargeId: String
+  user: User
+}
+
+input SubscriptionWhereUniqueInput {
+  id: ID
+}
+
+input SubscriptionWhereInput {
+  AND: [SubscriptionWhereInput!]
+  OR: [SubscriptionWhereInput!]
+  NOT: [SubscriptionWhereInput!]
+  id: IDFilter
+}
+
+input SubscriptionOrderByInput {
+  id: OrderDirection
+}
+
+input SubscriptionUpdateInput {
+  price: Int
+  plan: String
+  chargeId: String
+  user: UserRelateToOneForUpdateInput
+}
+
+input SubscriptionUpdateArgs {
+  where: SubscriptionWhereUniqueInput!
+  data: SubscriptionUpdateInput!
+}
+
+input SubscriptionCreateInput {
+  price: Int
+  plan: String
+  chargeId: String
+  user: UserRelateToOneForCreateInput
+}
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -407,6 +476,14 @@ type Query {
   ): [Course!]
   course(where: CourseWhereUniqueInput!): Course
   coursesCount(where: CourseWhereInput! = {}): Int
+  subscriptions(
+    where: SubscriptionWhereInput! = {}
+    orderBy: [SubscriptionOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Subscription!]
+  subscription(where: SubscriptionWhereUniqueInput!): Subscription
+  subscriptionsCount(where: SubscriptionWhereInput! = {}): Int
   keystone: KeystoneMeta!
 }
 

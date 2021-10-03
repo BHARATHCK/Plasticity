@@ -12,15 +12,17 @@ generator client {
 }
 
 model User {
-  id                      String    @id @default(cuid())
+  id                      String        @id @default(cuid())
   name                    String?
   password                String?
-  email                   String?   @unique
+  email                   String?       @unique
   isEducator              Boolean?
+  isSubscribed            String?
+  subscription            Subscription? @relation("Subscription_user")
   passwordResetToken      String?
   passwordResetIssuedAt   DateTime?
   passwordResetRedeemedAt DateTime?
-  from_Course_author      Course[]  @relation("Course_author")
+  from_Course_author      Course[]      @relation("Course_author")
 }
 
 model CourseVideo {
@@ -48,6 +50,15 @@ model Course {
   thumbnail   String?
 
   @@index([authorId])
+}
+
+model Subscription {
+  id       String  @id @default(cuid())
+  price    Int?
+  plan     String?
+  chargeId String?
+  user     User?   @relation("Subscription_user", fields: [userId], references: [id])
+  userId   String? @unique @map("user")
 }
 
 enum CourseStatusType {
