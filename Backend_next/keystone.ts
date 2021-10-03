@@ -7,6 +7,7 @@ import { User } from './src/lists/User';
 import { CourseVideo } from './src/lists/CourseVideo';
 import { v4 as uuidv4 } from 'uuid';
 import 'dotenv/config';
+import {sendEmail} from "./src/utils/sendMail";
 
 const databaseURL = process.env.DB_URL || 'mongodb://localhost/keystone-sick-fits-tutorial';
 
@@ -23,6 +24,7 @@ const { withAuth } = createAuth({
       async sendToken(args) {
           // send the email
           console.log(args)
+          await sendEmail(args.identity,  process.env.RESET_PASSWORD_URL+args.token , "" , false , "")
       },
   },
 });
