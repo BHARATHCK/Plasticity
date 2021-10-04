@@ -9,6 +9,9 @@
 - [x] NodeMailer mail setup.
 - [ ] Comment/rating feature implementation.
 - [ ] Community Feature with live streaming rooms.
+- [ ] Search functionality.
+- [ ] Treding page implementation
+- [ ] Pagination
 - [x] Test every path for Auth (API Should be protected).
 
 
