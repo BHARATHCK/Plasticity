@@ -30,6 +30,9 @@ function UserRating({ courseId, currentRating, ratingCount }) {
           ? userRating
           : Math.ceil((currentRating + userRating) / ratingCount),
     },
+    update: (cache) => {
+      cache.evict({ fieldName: 'course' });
+    },
   });
   function handleClick(e) {
     setUserRating(parseInt(e.target.getAttribute('id')));

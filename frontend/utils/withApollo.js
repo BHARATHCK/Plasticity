@@ -34,8 +34,14 @@ function createClient({ headers, initialState }) {
             typePolicies: {
                 Query: {
                     fields: {
-                        // TODO: We will add this together!
-                        // allProducts: paginationField(),
+                        courses: {
+                            keyArgs: false,
+                            // Concatenate the incoming list items with
+                            // the existing list items.
+                            merge(existing = [], incoming) {
+                                return [...existing, ...incoming];
+                            },
+                        }
                     },
                 },
             },
