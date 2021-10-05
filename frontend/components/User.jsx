@@ -16,6 +16,14 @@ export const CURRENT_USER_QUERY = gql`
           plan
           chargeId
         }
+        comment {
+          course {
+            id
+          }
+        }
+        rating {
+          id
+        }
       }
     }
   }

@@ -5,7 +5,6 @@ import Wrapper from '../../components/Wrapper';
 import { PlayIcon } from '@heroicons/react/outline';
 import gql from 'graphql-tag';
 import { useQuery } from '@apollo/client';
-import Subscribe from '../../components/Subscribe';
 import { useUser } from '../../components/User';
 
 const COURSE_DETAILS = gql`

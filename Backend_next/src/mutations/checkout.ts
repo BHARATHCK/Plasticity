@@ -62,7 +62,7 @@ async function checkout(
     await context.lists.User.updateOne({
         where: {id: userId},
         data: {
-            isSubscribed: true
+            isSubscribed: "true"
         }
     }).catch(err => {
         console.log(err);

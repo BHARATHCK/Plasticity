@@ -4,6 +4,7 @@ import { lists } from './schema';
 import { createAuth } from '@keystone-next/auth';
 import { Course } from './src/lists/Course';
 import {Subscription} from "./src/lists/Subscription";
+import {Comment} from "./src/lists/Comment";
 import { User } from './src/lists/User';
 import { CourseVideo } from './src/lists/CourseVideo';
 import { v4 as uuidv4 } from 'uuid';
@@ -53,7 +54,8 @@ export default withAuth(
           User,
           CourseVideo,
           Course,
-          Subscription
+          Subscription,
+          Comment
       }),
       extendGraphqlSchema,
       ui: {

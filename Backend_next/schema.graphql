@@ -46,6 +46,15 @@ type Mutation {
   updateSubscriptions(data: [SubscriptionUpdateArgs!]!): [Subscription]
   deleteSubscription(where: SubscriptionWhereUniqueInput!): Subscription
   deleteSubscriptions(where: [SubscriptionWhereUniqueInput!]!): [Subscription]
+  createComment(data: CommentCreateInput!): Comment
+  createComments(data: [CommentCreateInput!]!): [Comment]
+  updateComment(
+    where: CommentWhereUniqueInput!
+    data: CommentUpdateInput!
+  ): Comment
+  updateComments(data: [CommentUpdateArgs!]!): [Comment]
+  deleteComment(where: CommentWhereUniqueInput!): Comment
+  deleteComments(where: [CommentWhereUniqueInput!]!): [Comment]
   endSession: Boolean!
 }
 
@@ -117,6 +126,27 @@ type User {
   isEducator: Boolean
   isSubscribed: String
   subscription: Subscription
+  comment(
+    where: CommentWhereInput! = {}
+    orderBy: [CommentOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Comment!]
+  commentCount(where: CommentWhereInput! = {}): Int
+  rating(
+    where: CourseWhereInput! = {}
+    orderBy: [CourseOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Course!]
+  ratingCount(where: CourseWhereInput! = {}): Int
+  coursestaken(
+    where: CourseWhereInput! = {}
+    orderBy: [CourseOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Course!]
+  coursestakenCount(where: CourseWhereInput! = {}): Int
   passwordResetToken: PasswordState
   passwordResetIssuedAt: String
   passwordResetRedeemedAt: String
@@ -200,6 +230,9 @@ input UserUpdateInput {
   isEducator: Boolean
   isSubscribed: String
   subscription: SubscriptionRelateToOneForUpdateInput
+  comment: CommentRelateToManyForUpdateInput
+  rating: CourseRelateToManyForUpdateInput
+  coursestaken: CourseRelateToManyForUpdateInput
   passwordResetToken: String
   passwordResetIssuedAt: String
   passwordResetRedeemedAt: String
@@ -209,6 +242,20 @@ input SubscriptionRelateToOneForUpdateInput {
   create: SubscriptionCreateInput
   connect: SubscriptionWhereUniqueInput
   disconnect: Boolean
+}
+
+input CommentRelateToManyForUpdateInput {
+  disconnect: [CommentWhereUniqueInput!]
+  set: [CommentWhereUniqueInput!]
+  create: [CommentCreateInput!]
+  connect: [CommentWhereUniqueInput!]
+}
+
+input CourseRelateToManyForUpdateInput {
+  disconnect: [CourseWhereUniqueInput!]
+  set: [CourseWhereUniqueInput!]
+  create: [CourseCreateInput!]
+  connect: [CourseWhereUniqueInput!]
 }
 
 input UserUpdateArgs {
@@ -223,6 +270,9 @@ input UserCreateInput {
   isEducator: Boolean
   isSubscribed: String
   subscription: SubscriptionRelateToOneForCreateInput
+  comment: CommentRelateToManyForCreateInput
+  rating: CourseRelateToManyForCreateInput
+  coursestaken: CourseRelateToManyForCreateInput
   passwordResetToken: String
   passwordResetIssuedAt: String
   passwordResetRedeemedAt: String
@@ -231,6 +281,16 @@ input UserCreateInput {
 input SubscriptionRelateToOneForCreateInput {
   create: SubscriptionCreateInput
   connect: SubscriptionWhereUniqueInput
+}
+
+input CommentRelateToManyForCreateInput {
+  create: [CommentCreateInput!]
+  connect: [CommentWhereUniqueInput!]
+}
+
+input CourseRelateToManyForCreateInput {
+  create: [CourseCreateInput!]
+  connect: [CourseWhereUniqueInput!]
 }
 
 type CourseVideo {
@@ -325,6 +385,15 @@ type Course {
   ): [CourseVideo!]
   VideosCount(where: CourseVideoWhereInput! = {}): Int
   thumbnail: String
+  comment(
+    where: CommentWhereInput! = {}
+    orderBy: [CommentOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Comment!]
+  commentCount(where: CommentWhereInput! = {}): Int
+  rating: Int
+  ratingCount: Int
 }
 
 enum CourseStatusType {
@@ -342,6 +411,13 @@ input CourseWhereInput {
   OR: [CourseWhereInput!]
   NOT: [CourseWhereInput!]
   id: IDFilter
+  comment: CommentManyRelationFilter
+}
+
+input CommentManyRelationFilter {
+  every: CommentWhereInput
+  some: CommentWhereInput
+  none: CommentWhereInput
 }
 
 input CourseOrderByInput {
@@ -356,6 +432,9 @@ input CourseUpdateInput {
   author: UserRelateToOneForUpdateInput
   Videos: CourseVideoRelateToManyForUpdateInput
   thumbnail: String
+  comment: CommentRelateToManyForUpdateInput
+  rating: Int
+  ratingCount: Int
 }
 
 input UserRelateToOneForUpdateInput {
@@ -384,6 +463,9 @@ input CourseCreateInput {
   author: UserRelateToOneForCreateInput
   Videos: CourseVideoRelateToManyForCreateInput
   thumbnail: String
+  comment: CommentRelateToManyForCreateInput
+  rating: Int
+  ratingCount: Int
 }
 
 input UserRelateToOneForCreateInput {
@@ -438,6 +520,67 @@ input SubscriptionCreateInput {
   user: UserRelateToOneForCreateInput
 }
 
+type Comment {
+  id: ID!
+  comment: String
+  timestamp: String
+  course: Course
+  user(
+    where: UserWhereInput! = {}
+    orderBy: [UserOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [User!]
+  userCount(where: UserWhereInput! = {}): Int
+}
+
+input CommentWhereUniqueInput {
+  id: ID
+}
+
+input CommentWhereInput {
+  AND: [CommentWhereInput!]
+  OR: [CommentWhereInput!]
+  NOT: [CommentWhereInput!]
+  id: IDFilter
+  course: CourseWhereInput
+}
+
+input CommentOrderByInput {
+  id: OrderDirection
+}
+
+input CommentUpdateInput {
+  comment: String
+  timestamp: String
+  course: CourseRelateToOneForUpdateInput
+  user: UserRelateToManyForUpdateInput
+}
+
+input UserRelateToManyForUpdateInput {
+  disconnect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  create: [UserCreateInput!]
+  connect: [UserWhereUniqueInput!]
+}
+
+input CommentUpdateArgs {
+  where: CommentWhereUniqueInput!
+  data: CommentUpdateInput!
+}
+
+input CommentCreateInput {
+  comment: String
+  timestamp: String
+  course: CourseRelateToOneForCreateInput
+  user: UserRelateToManyForCreateInput
+}
+
+input UserRelateToManyForCreateInput {
+  create: [UserCreateInput!]
+  connect: [UserWhereUniqueInput!]
+}
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -484,6 +627,14 @@ type Query {
   ): [Subscription!]
   subscription(where: SubscriptionWhereUniqueInput!): Subscription
   subscriptionsCount(where: SubscriptionWhereInput! = {}): Int
+  comments(
+    where: CommentWhereInput! = {}
+    orderBy: [CommentOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Comment!]
+  comment(where: CommentWhereUniqueInput!): Comment
+  commentsCount(where: CommentWhereInput! = {}): Int
   keystone: KeystoneMeta!
 }
 

@@ -28,6 +28,18 @@ export const User = {
         }),
         subscription: relationship({
             ref: 'Subscription.user'
+        }),
+        comment: relationship({
+            ref: 'Comment.user',
+            many: true
+        }),
+        rating:relationship({
+            ref: 'Course',
+            many: true
+        }),
+        coursestaken: relationship({
+            ref: 'Course',
+            many: true
         })
     }
 }

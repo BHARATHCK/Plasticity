@@ -1,4 +1,4 @@
-import { relationship, text , select} from '@keystone-next/keystone/fields';
+import { relationship, text , select, integer} from '@keystone-next/keystone/fields';
 
 export const Course = {
     fields: {
@@ -38,6 +38,20 @@ export const Course = {
             ui: {
                 displayMode: 'input'
             }
+        }),
+        comment: relationship({
+            ref: 'Comment.course',
+            many: true,
+            isFilterable: true,
+            isOrderable: true
+        }),
+        rating: integer({ 
+            isRequired: true,
+            defaultValue: 0
+        }),
+        ratingCount: integer({
+            defaultValue: 0
         })
+
     }
 }
