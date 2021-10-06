@@ -7,11 +7,11 @@
 - [x] Stripe Payment integration.
 - [x] Test all pages for mobile friendliness.
 - [x] NodeMailer mail setup.
-- [ ] Comment/rating feature implementation.
+- [x] Comment/rating feature implementation.
 - [ ] Community Feature with live streaming rooms.
 - [ ] Search functionality.
 - [ ] Treding page implementation
-- [ ] Pagination
+- [x] Pagination
 - [x] Test every path for Auth (API Should be protected).
 
 
