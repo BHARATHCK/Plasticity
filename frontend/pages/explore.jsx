@@ -3,6 +3,7 @@ import React from 'react';
 import Wrapper from '../components/Wrapper';
 import gql from 'graphql-tag';
 import CourseCard from '../components/CourseCard';
+import { perPage } from '../config';
 
 const ALL_COURSES_QUERY = gql`
   query ALL_COURSES_QUERY($skip: Int = 0, $take: Int) {
@@ -24,7 +25,7 @@ function Explore() {
   const { data, loading, error, fetchMore } = useQuery(ALL_COURSES_QUERY, {
     variables: {
       skip: 0,
-      take: 1,
+      take: perPage,
     },
     notifyOnNetworkStatusChange: true,
   });
