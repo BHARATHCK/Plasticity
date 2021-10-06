@@ -17,6 +17,7 @@ model User {
   password                String?
   email                   String?       @unique
   isEducator              Boolean?
+  isAdmin                 Boolean?
   isSubscribed            String?
   subscription            Subscription? @relation("Subscription_user")
   comment                 Comment[]     @relation("Comment_user_User_comment")

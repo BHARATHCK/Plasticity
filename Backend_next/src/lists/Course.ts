@@ -1,6 +1,7 @@
+import { list } from '@keystone-next/keystone';
 import { relationship, text , select, integer} from '@keystone-next/keystone/fields';
 
-export const Course = {
+export const Course = list({
     fields: {
         title: text({isRequired: true}),
         description: text({isRequired: true}),
@@ -43,15 +44,109 @@ export const Course = {
             ref: 'Comment.course',
             many: true,
             isFilterable: true,
-            isOrderable: true
+            isOrderable: true,
+            ui: {
+                itemView: {
+                    fieldMode: ({item , session}) => {
+                        if(session.data.isAdmin){
+                            return 'edit';
+                        } else {
+                            return 'hidden';
+                        }
+                    }
+                  },
+                  createView: {
+                      fieldMode: ({session}) => {
+                        if(session.data.isAdmin){
+                            return 'edit';
+                        } else {
+                            return 'hidden';
+                        }
+                      }
+                  }
+            }
         }),
         rating: integer({ 
             isRequired: true,
-            defaultValue: 0
+            defaultValue: 0,
+            ui: {
+                itemView: {
+                    fieldMode: ({item , session}) => {
+                        if(session.data.isAdmin){
+                            return 'edit';
+                        } else {
+                            return 'hidden';
+                        }
+                    }
+                  },
+                  createView: {
+                      fieldMode: ({session}) => {
+                        if(session.data.isAdmin){
+                            return 'edit';
+                        } else {
+                            return 'hidden';
+                        }
+                      }
+                  }
+            }
         }),
         ratingCount: integer({
-            defaultValue: 0
+            defaultValue: 0,
+            ui: {
+                itemView: {
+                    fieldMode: ({item , session}) => {
+                        if(session.data.isAdmin){
+                            return 'edit';
+                        } else {
+                            return 'hidden';
+                        }
+                    }
+                  },
+                  createView: {
+                      fieldMode: ({session}) => {
+                        if(session.data.isAdmin){
+                            return 'edit';
+                        } else {
+                            return 'hidden';
+                        }
+                      }
+                  }
+            }
         })
 
+    },
+    access: {
+        operation: {
+            query: () => {
+                return true;
+            },
+            create: ({ session, context, listKey, operation ,  }) => {
+                
+                let accessValue = false;
+                if(session.data.isEducator){
+                    accessValue = true;
+                }
+                return accessValue;
+            }
+          },
+          item : {
+            update: async ({context, listKey , operation , originalInput , item , session}) => {
+                let accessValue = false;
+                console.log("originalInput " ,originalInput)
+                console.log("item " ,item)
+                console.log("session " ,session)
+                if(item.authorId === session.itemId){
+                    accessValue = true;
+                }
+                return accessValue;
+            },
+            delete: async ({context, listKey , operation , item , session}) => {
+                let accessValue = false;
+                if(item.authorId === session.itemId){
+                    accessValue = true;
+                }
+                return accessValue;
+            }
+          }
     }
-}
+})

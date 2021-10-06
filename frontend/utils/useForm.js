@@ -11,7 +11,6 @@ export default function useForm(initial = {}) {
     }, [initialValues]);
 
     function handleChange(e) {
-        console.log(e.target.name, " -- ", e.target.value);
         let { value, name, type } = e.target;
         if (type === 'number') {
             value = parseInt(value);
@@ -19,12 +18,15 @@ export default function useForm(initial = {}) {
         if (type === 'file') {
             [value] = e.target.files;
         }
+        if (type === 'select-one') {
+            value = value;
+        }
 
         setInputs({
-            // copy the existing state
             ...inputs,
             [name]: value,
         });
+
     }
 
     function resetForm() {

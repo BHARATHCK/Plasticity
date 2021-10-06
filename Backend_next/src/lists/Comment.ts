@@ -1,6 +1,12 @@
+import { list } from '@keystone-next/keystone';
 import { relationship, text , select , password, checkbox , timestamp} from '@keystone-next/keystone/fields';
 
-export const Comment = {
+export const Comment = list({
+    ui: {
+        hideCreate: true,
+        hideDelete: true,
+        isHidden: true
+    },
     fields: {
         comment: text({
             isRequired: true
@@ -17,4 +23,4 @@ export const Comment = {
             many: true
         })
     }
-}
+})

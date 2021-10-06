@@ -1,16 +1,15 @@
+import { createAuth } from '@keystone-next/auth';
 import { config, createSchema } from '@keystone-next/keystone';
 import { statelessSessions } from '@keystone-next/keystone/session';
-import { lists } from './schema';
-import { createAuth } from '@keystone-next/auth';
-import { Course } from './src/lists/Course';
-import {Subscription} from "./src/lists/Subscription";
-import {Comment} from "./src/lists/Comment";
-import { User } from './src/lists/User';
-import { CourseVideo } from './src/lists/CourseVideo';
-import { v4 as uuidv4 } from 'uuid';
 import 'dotenv/config';
-import {sendEmail} from "./src/utils/sendMail";
-import {extendGraphqlSchema} from "./src/mutations";
+import { v4 as uuidv4 } from 'uuid';
+import { Comment } from "./src/lists/Comment";
+import { Course } from './src/lists/Course';
+import { CourseVideo } from './src/lists/CourseVideo';
+import { Subscription } from "./src/lists/Subscription";
+import { User } from './src/lists/User';
+import { extendGraphqlSchema } from "./src/mutations";
+import { sendEmail } from "./src/utils/sendMail";
 
 const databaseURL = process.env.DB_URL || 'mongodb://localhost/keystone-sick-fits-tutorial';
 
@@ -19,7 +18,7 @@ const { withAuth } = createAuth({
   listKey: 'User',
   identityField: 'email',
   secretField: 'password',
-  sessionData: 'id name email',
+  sessionData: 'id name email isEducator isSubscribed isAdmin',
   initFirstItem: {
       fields: ['name', 'email', 'password'],
   },
@@ -60,9 +59,11 @@ export default withAuth(
       extendGraphqlSchema,
       ui: {
           // Show the UI only for poeple who pass this test
-          isAccessAllowed: ({ session }) =>
-              // console.log(session);
-              !!session?.data,
+          isAccessAllowed: ({ session }) =>{
+            console.log("Admin UI Access : ",session);
+            return session?.data.isEducator || session?.data.isAdmin ? true : false ;
+          }
+              
       },
       files: {
         upload: 'local',

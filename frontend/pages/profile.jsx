@@ -14,9 +14,10 @@ function Profile() {
   const router = useRouter();
   const [signOut, { loading, error }] = useMutation(SIGN_OUT_MUTATION, {
     refetchQueries: [{ query: CURRENT_USER_QUERY }],
+    notifyOnNetworkStatusChange: true,
   });
   return (
-    <div>
+    <div className="flex flex-col items-center justify-center text-center">
       {error ? (
         <p className="text-red-500 text-xs italic">{error.message}</p>
       ) : (
@@ -38,6 +39,13 @@ function Profile() {
       >
         Sign Out
       </button>
+      <div>
+        <a href={process.env.NEXT_PUBLIC_ADMIN_UI_URL}>
+          <button className="mt-10 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+            Publish a course
+          </button>
+        </a>
+      </div>
     </div>
   );
 }

@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { relationship, text , file} from '@keystone-next/keystone/fields';
 import AWS from 'aws-sdk';
 import {readFile} from 'fs';
+import { list } from '@keystone-next/keystone';
 
 
 const s3 = new AWS.S3({
@@ -9,7 +10,44 @@ const s3 = new AWS.S3({
     secretAccessKey: process.env.S3_SECRET
   })
 
-export const CourseVideo = {
+export const CourseVideo = list({
+  ui: {
+    isHidden: true
+  },
+  access: {
+    operation: {
+        query: () => {
+            return true;
+        },
+        create: ({ session, context, listKey, operation ,  }) => {
+            
+            let accessValue = false;
+            if(session.data.isEducator){
+                accessValue = true;
+            }
+            return accessValue;
+        }
+      },
+      item : {
+        update: async ({context, listKey , operation , originalInput , item , session}) => {
+            let accessValue = false;
+            console.log("originalInput " ,originalInput)
+            console.log("item " ,item)
+            console.log("session " ,session)
+            if(item.authorId === session.itemId){
+                accessValue = true;
+            }
+            return accessValue;
+        },
+        delete: async ({context, listKey , operation , item , session}) => {
+            let accessValue = false;
+            if(item.authorId === session.itemId){
+                accessValue = true;
+            }
+            return accessValue;
+        }
+      }
+},
     fields: {
         video: file({
             isRequired: true,
@@ -45,4 +83,4 @@ export const CourseVideo = {
         Course: relationship({ref: "Course.Videos" }), 
         description: text({isRequired: true}) 
     }
-}
+})

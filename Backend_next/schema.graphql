@@ -124,6 +124,7 @@ type User {
   password: PasswordState
   email: String
   isEducator: Boolean
+  isAdmin: Boolean
   isSubscribed: String
   subscription: Subscription
   comment(
@@ -228,6 +229,7 @@ input UserUpdateInput {
   password: String
   email: String
   isEducator: Boolean
+  isAdmin: Boolean
   isSubscribed: String
   subscription: SubscriptionRelateToOneForUpdateInput
   comment: CommentRelateToManyForUpdateInput
@@ -268,6 +270,7 @@ input UserCreateInput {
   password: String
   email: String
   isEducator: Boolean
+  isAdmin: Boolean
   isSubscribed: String
   subscription: SubscriptionRelateToOneForCreateInput
   comment: CommentRelateToManyForCreateInput

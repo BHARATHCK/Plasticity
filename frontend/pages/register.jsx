@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { CURRENT_USER_QUERY } from '../components/User';
 import Wrapper from '../components/Wrapper';
 import useForm from '../utils/useForm';
@@ -28,15 +28,23 @@ const REGISTER_MUTATION = gql`
 `;
 
 function Register() {
+  let mutationVariables = '';
   const router = useRouter();
+  const inputRef = useRef();
   const { clearForm, inputs, handleChange, resetForm } = useForm({
     name: '',
     email: '',
     password: '',
+    educator: '',
   });
 
+  useEffect(() => {
+    console.log('Use Effect : ', inputs);
+    inputRef.current = inputs;
+  }, [inputs]);
+
   const [signup, { data, error, loading }] = useMutation(REGISTER_MUTATION, {
-    variables: inputs,
+    notifyOnNetworkStatusChange: true,
   });
 
   if (data) {
@@ -45,10 +53,21 @@ function Register() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    console.log(inputs);
     let res = '';
     try {
-      res = await signup();
+      console.log('FINAL VALUES :::: ', inputRef.current);
+      console.log(
+        'Educaor calc',
+        inputRef?.current?.educator === 'educator' ? true : false
+      );
+      res = await signup({
+        variables: {
+          name: inputRef?.current?.name,
+          email: inputRef?.current?.email,
+          password: inputRef?.current?.password,
+          educator: inputRef?.current?.educator === 'educator' ? true : false,
+        },
+      });
     } catch (err) {
       res = err;
     }
@@ -106,7 +125,7 @@ function Register() {
                   />
                 </label>
               </div>
-              <div className="mb-6">
+              <div className="mb-4">
                 <label
                   className="block text-gray-700 text-sm font-bold mb-2"
                   htmlFor="password"
@@ -125,6 +144,19 @@ function Register() {
                   {/*  */}
                 </label>
               </div>
+              <label className="block mt-4">
+                <span className="text-gray-700">Account Type</span>
+                <select
+                  className="form-select mt-1 block w-full"
+                  name="educator"
+                  id="educator"
+                  value={inputs.educator}
+                  onChange={handleChange}
+                >
+                  <option value="educator">Educator</option>
+                  <option value="subscriber">Subscriber</option>
+                </select>
+              </label>
               <div className="flex items-center justify-between">
                 <button
                   disabled={loading}
