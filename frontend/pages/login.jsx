@@ -27,6 +27,9 @@ const SIGNIN_MUTATION = gql`
 
 function Login() {
   const router = useRouter();
+  let guestStudent = false;
+  let guestEducator = false;
+
   const { clearForm, inputs, handleChange, resetForm } = useForm({
     username: '',
     email: '',
@@ -44,13 +47,20 @@ function Login() {
       ? data?.authenticateUserWithPassword
       : undefined;
 
-  if (data?.authenticateUserWithPassword?.id) {
-    router.push('/');
-  }
-
   async function handleSubmit(e) {
     e.preventDefault(); // stop the form from submitting
     console.log(inputs);
+
+    if (guestStudent) {
+      inputs.email = process.env.NEXT_PUBLIC_GUEST_STUDENT_USER;
+      inputs.username = process.env.NEXT_PUBLIC_GUEST_STUDENT_USER;
+      inputs.password = process.env.NEXT_PUBLIC_GUEST_STUDENT_PASS;
+    } else if (guestEducator) {
+      inputs.email = process.env.NEXT_PUBLIC_GUEST_EDUCATOR_USER;
+      inputs.username = process.env.NEXT_PUBLIC_GUEST_EDUCATOR_USER;
+      inputs.password = process.env.NEXT_PUBLIC_GUEST_EDUCATOR_PASS;
+    }
+
     let res = '';
     try {
       res = await signin();
@@ -58,6 +68,10 @@ function Login() {
       res = err;
     }
     resetForm();
+  }
+
+  if (data?.authenticateUserWithPassword?.item?.id) {
+    router.back();
   }
 
   return (
@@ -71,9 +85,11 @@ function Login() {
           >
             <fieldset>
               {customError ? (
-                <p className="text-red-500 text-xs italic">
-                  {customError.message}
-                </p>
+                <>
+                  <p className="text-red-500 text-xs italic">
+                    {customError.message}
+                  </p>
+                </>
               ) : (
                 ''
               )}
@@ -128,6 +144,28 @@ function Login() {
                   </a>
                 </NextLink>
               </div>
+
+              <button
+                disabled={loading}
+                onClick={() => (guestStudent = true)}
+                className="mt-4 w-full bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+                type="submit"
+              >
+                Guest Login as Student
+              </button>
+              <button
+                onClick={() => (guestEducator = true)}
+                disabled={loading}
+                className="mt-4 w-full bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+                type="submit"
+              >
+                <p>Guest Login as Educator</p>
+              </button>
+              <NextLink href="/register">
+                <button className="mt-4 w-full bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+                  Register
+                </button>
+              </NextLink>
             </fieldset>
           </form>
           <p className="text-center text-gray-500 text-xs">

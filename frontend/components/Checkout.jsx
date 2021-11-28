@@ -9,6 +9,8 @@ import { loadStripe } from '@stripe/stripe-js';
 import nProgress from 'nprogress';
 import { useState } from 'react';
 import gql from 'graphql-tag';
+import { useUser } from './User';
+import { useRouter } from 'next/dist/client/router';
 
 const stripeLib = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PAYMENTS_KEY);
 
@@ -19,6 +21,8 @@ const CHECKOUT_MUTATION = gql`
 `;
 
 function CheckoutStripeForm() {
+  const user = useUser();
+  const router = useRouter();
   const [error, setError] = useState();
   const [loading, setLoading] = useState();
   const stripe = useStripe();
@@ -53,10 +57,7 @@ function CheckoutStripeForm() {
           token: paymentMethod.id,
         },
       });
-
-      console.log('ORDER L : ', order);
-
-      nProgress.done();
+      router.push('/explore');
     } catch (err) {
       console.log('ERR *********** ', err);
     }
@@ -73,11 +74,14 @@ function CheckoutStripeForm() {
             <p className="text-red-500 text-xs italic">{error.message}</p>
           )}
           <CardElement />
-          <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-10"
-            type="submit"
-          >
-            Check Out
+
+          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-6">
+            <div className="flex items-center justify-center space-x-6">
+              {checkoutLoading ? (
+                <div className="w-8 h-8 border-b-2 border-gray-900 rounded-full animate-spin"></div>
+              ) : null}
+              <div>Check Out</div>
+            </div>
           </button>
         </form>
         <p className="text-center text-gray-500 text-xs">

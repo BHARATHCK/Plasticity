@@ -15,12 +15,7 @@ export const Subscription = list({
                 return accessValue;
             },
             create: ({ session, context, listKey, operation ,  }) => {
-                
-                let accessValue = false;
-                if(!session.data.isEducator ){
-                    accessValue = true;
-                }
-                return accessValue;
+                return true;
             },
             update: ({ session, context, listKey, operation ,  }) => {
                 

@@ -38,11 +38,13 @@ function PlayCourse() {
 
   console.log(router.query.id);
 
-  if (router.isReady && router.query.id === undefined) {
+  if (
+    (router.isReady && router.query.id === undefined) ||
+    user == null ||
+    user == undefined
+  ) {
     router.push('/login');
-  }
-
-  if (user.isSubscribed === 'false' && user.subscription === null) {
+  } else if (user.isSubscribed === 'false' && user.subscription === null) {
     router.push('/pricing');
   }
 

@@ -7,6 +7,7 @@ import { Comment } from "./src/lists/Comment";
 import { Course } from './src/lists/Course';
 import { CourseVideo } from './src/lists/CourseVideo';
 import { Subscription } from "./src/lists/Subscription";
+import { Community } from './src/lists/Community';
 import { User } from './src/lists/User';
 import { extendGraphqlSchema } from "./src/mutations";
 import { sendEmail } from "./src/utils/sendMail";
@@ -54,13 +55,13 @@ export default withAuth(
           CourseVideo,
           Course,
           Subscription,
-          Comment
+          Comment,
+          Community
       }),
       extendGraphqlSchema,
       ui: {
           // Show the UI only for poeple who pass this test
           isAccessAllowed: ({ session }) =>{
-            console.log("Admin UI Access : ",session);
             return session?.data.isEducator || session?.data.isAdmin ? true : false ;
           }
               

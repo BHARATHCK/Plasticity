@@ -27,6 +27,7 @@ model User {
   passwordResetIssuedAt   DateTime?
   passwordResetRedeemedAt DateTime?
   from_Course_author      Course[]      @relation("Course_author")
+  from_Community_author   Community[]   @relation("Community_author")
 }
 
 model CourseVideo {
@@ -51,14 +52,19 @@ model Course {
   author                 User?             @relation("Course_author", fields: [authorId], references: [id])
   authorId               String?           @map("author")
   Videos                 CourseVideo[]     @relation("CourseVideo_Course")
+  Community              Community?        @relation("Course_Community", fields: [CommunityId], references: [id])
+  CommunityId            String?           @map("Community")
   thumbnail              String?
   comment                Comment[]         @relation("Comment_course")
   rating                 Int?
   ratingCount            Int?
+  watchedCount           Int?
   from_User_rating       User[]            @relation("User_rating_many")
   from_User_coursestaken User[]            @relation("User_coursestaken_many")
 
   @@index([authorId])
+  @@index([CommunityId])
+  @@index([watchedCount])
 }
 
 model Subscription {
@@ -79,6 +85,20 @@ model Comment {
   user      User[]    @relation("Comment_user_User_comment")
 
   @@index([courseId])
+}
+
+model Community {
+  id          String   @id @default(cuid())
+  title       String?
+  description String?
+  whatsapp    String?
+  discord     String?
+  author      User?    @relation("Community_author", fields: [authorId], references: [id])
+  authorId    String?  @map("author")
+  Course      Course[] @relation("Course_Community")
+  thumbnail   String?
+
+  @@index([authorId])
 }
 
 enum CourseStatusType {

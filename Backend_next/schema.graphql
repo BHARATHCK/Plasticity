@@ -55,6 +55,15 @@ type Mutation {
   updateComments(data: [CommentUpdateArgs!]!): [Comment]
   deleteComment(where: CommentWhereUniqueInput!): Comment
   deleteComments(where: [CommentWhereUniqueInput!]!): [Comment]
+  createCommunity(data: CommunityCreateInput!): Community
+  createCommunities(data: [CommunityCreateInput!]!): [Community]
+  updateCommunity(
+    where: CommunityWhereUniqueInput!
+    data: CommunityUpdateInput!
+  ): Community
+  updateCommunities(data: [CommunityUpdateArgs!]!): [Community]
+  deleteCommunity(where: CommunityWhereUniqueInput!): Community
+  deleteCommunities(where: [CommunityWhereUniqueInput!]!): [Community]
   endSession: Boolean!
 }
 
@@ -387,6 +396,7 @@ type Course {
     skip: Int! = 0
   ): [CourseVideo!]
   VideosCount(where: CourseVideoWhereInput! = {}): Int
+  Community: Community
   thumbnail: String
   comment(
     where: CommentWhereInput! = {}
@@ -397,6 +407,7 @@ type Course {
   commentCount(where: CommentWhereInput! = {}): Int
   rating: Int
   ratingCount: Int
+  watchedCount: Int
 }
 
 enum CourseStatusType {
@@ -415,6 +426,7 @@ input CourseWhereInput {
   NOT: [CourseWhereInput!]
   id: IDFilter
   comment: CommentManyRelationFilter
+  watchedCount: IntNullableFilter
 }
 
 input CommentManyRelationFilter {
@@ -423,8 +435,20 @@ input CommentManyRelationFilter {
   none: CommentWhereInput
 }
 
+input IntNullableFilter {
+  equals: Int
+  in: [Int!]
+  notIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: IntNullableFilter
+}
+
 input CourseOrderByInput {
   id: OrderDirection
+  watchedCount: OrderDirection
 }
 
 input CourseUpdateInput {
@@ -434,10 +458,12 @@ input CourseUpdateInput {
   category: String
   author: UserRelateToOneForUpdateInput
   Videos: CourseVideoRelateToManyForUpdateInput
+  Community: CommunityRelateToOneForUpdateInput
   thumbnail: String
   comment: CommentRelateToManyForUpdateInput
   rating: Int
   ratingCount: Int
+  watchedCount: Int
 }
 
 input UserRelateToOneForUpdateInput {
@@ -453,6 +479,12 @@ input CourseVideoRelateToManyForUpdateInput {
   connect: [CourseVideoWhereUniqueInput!]
 }
 
+input CommunityRelateToOneForUpdateInput {
+  create: CommunityCreateInput
+  connect: CommunityWhereUniqueInput
+  disconnect: Boolean
+}
+
 input CourseUpdateArgs {
   where: CourseWhereUniqueInput!
   data: CourseUpdateInput!
@@ -465,10 +497,12 @@ input CourseCreateInput {
   category: String
   author: UserRelateToOneForCreateInput
   Videos: CourseVideoRelateToManyForCreateInput
+  Community: CommunityRelateToOneForCreateInput
   thumbnail: String
   comment: CommentRelateToManyForCreateInput
   rating: Int
   ratingCount: Int
+  watchedCount: Int
 }
 
 input UserRelateToOneForCreateInput {
@@ -479,6 +513,11 @@ input UserRelateToOneForCreateInput {
 input CourseVideoRelateToManyForCreateInput {
   create: [CourseVideoCreateInput!]
   connect: [CourseVideoWhereUniqueInput!]
+}
+
+input CommunityRelateToOneForCreateInput {
+  create: CommunityCreateInput
+  connect: CommunityWhereUniqueInput
 }
 
 type Subscription {
@@ -584,6 +623,63 @@ input UserRelateToManyForCreateInput {
   connect: [UserWhereUniqueInput!]
 }
 
+type Community {
+  id: ID!
+  title: String
+  description: String
+  whatsapp: String
+  discord: String
+  author: User
+  Course(
+    where: CourseWhereInput! = {}
+    orderBy: [CourseOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Course!]
+  CourseCount(where: CourseWhereInput! = {}): Int
+  thumbnail: String
+}
+
+input CommunityWhereUniqueInput {
+  id: ID
+}
+
+input CommunityWhereInput {
+  AND: [CommunityWhereInput!]
+  OR: [CommunityWhereInput!]
+  NOT: [CommunityWhereInput!]
+  id: IDFilter
+}
+
+input CommunityOrderByInput {
+  id: OrderDirection
+}
+
+input CommunityUpdateInput {
+  title: String
+  description: String
+  whatsapp: String
+  discord: String
+  author: UserRelateToOneForUpdateInput
+  Course: CourseRelateToManyForUpdateInput
+  thumbnail: String
+}
+
+input CommunityUpdateArgs {
+  where: CommunityWhereUniqueInput!
+  data: CommunityUpdateInput!
+}
+
+input CommunityCreateInput {
+  title: String
+  description: String
+  whatsapp: String
+  discord: String
+  author: UserRelateToOneForCreateInput
+  Course: CourseRelateToManyForCreateInput
+  thumbnail: String
+}
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -638,6 +734,14 @@ type Query {
   ): [Comment!]
   comment(where: CommentWhereUniqueInput!): Comment
   commentsCount(where: CommentWhereInput! = {}): Int
+  communities(
+    where: CommunityWhereInput! = {}
+    orderBy: [CommunityOrderByInput!]! = []
+    take: Int
+    skip: Int! = 0
+  ): [Community!]
+  community(where: CommunityWhereUniqueInput!): Community
+  communitiesCount(where: CommunityWhereInput! = {}): Int
   keystone: KeystoneMeta!
 }
 

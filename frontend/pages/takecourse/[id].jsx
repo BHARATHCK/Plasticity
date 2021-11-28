@@ -22,6 +22,7 @@ const COURSE_DETAILS = gql`
       status
       rating
       ratingCount
+      watchedCount
       author {
         name
       }
@@ -71,6 +72,17 @@ const SUBMIT_COMMENT_MUTATION = gql`
   }
 `;
 
+const UPDATE_COURSE_WATCHED_COUNT_Mut = gql`
+  mutation UPDATE_COURSE_WATCHED_COUNT($courseId: ID!, $watchedCount: Int!) {
+    updateCourse(
+      data: { watchedCount: $watchedCount }
+      where: { id: $courseId }
+    ) {
+      id
+    }
+  }
+`;
+
 function TakeCourse() {
   console.log('COMPONENT RENDERED');
   const router = useRouter();
@@ -82,6 +94,13 @@ function TakeCourse() {
     variables: {
       id: router.query.id,
     },
+  });
+
+  const [
+    updateWatchCount,
+    { loading: watchCountLoading, error: watchCountError },
+  ] = useMutation(UPDATE_COURSE_WATCHED_COUNT_Mut, {
+    notifyOnNetworkStatusChange: true,
   });
 
   const { clearForm, inputs, handleChange, resetForm } = useForm({
@@ -109,7 +128,7 @@ function TakeCourse() {
       },
       notifyOnNetworkStatusChange: true,
       update: (cache) => {
-        cache.evict({ fieldName: 'comments' });
+        cache.evict({ fieldName: 'comments' }, { fieldName: 'user' });
       },
     }
   );
@@ -123,8 +142,10 @@ function TakeCourse() {
     let res = '';
     try {
       res = await submitComment();
+      setUserCommented(true);
     } catch (err) {
       res = err;
+      setUserCommented(false);
     }
     resetForm();
   }
@@ -170,7 +191,20 @@ function TakeCourse() {
               </div>
               <div>{data?.course?.description}</div>
               <NextLink href={`/playcourse/${data?.course?.id}`}>
-                <button className="bg-black text-white font-bold py-2 px-4 rounded">
+                <button
+                  onClick={async () => {
+                    const res = await updateWatchCount({
+                      variables: {
+                        courseId: data?.course?.id,
+                        watchedCount: data?.course?.watchedCount
+                          ? data?.course?.watchedCount + 1
+                          : 1,
+                      },
+                    });
+                    console.log('UPDATED COUNT ** : ', res);
+                  }}
+                  className="bg-black text-white font-bold py-2 px-4 rounded"
+                >
                   Play
                 </button>
               </NextLink>
@@ -203,45 +237,49 @@ function TakeCourse() {
                 />
               </div>
               <h2 className="text-gray-800 text-lg font-bold">Comments</h2>
-              {userCommented ? (
-                <p>You have already commented on this course!</p>
-              ) : (
-                <form
-                  className="w-full max-w-xl bg-white rounded-lg"
-                  method="POST"
-                  onSubmit={handleCommentSubmit}
-                >
-                  <div className="flex flex-wrap -mx-3 mb-6">
-                    <div className="w-full md:w-full mb-2 mt-2">
-                      <textarea
-                        className="bg-gray-100 rounded border border-gray-400 leading-normal resize-none w-full h-20 font-medium placeholder-gray-700 focus:outline-none focus:bg-white"
-                        name="comment"
-                        placeholder="Type Your Comment"
-                        required
-                        value={inputs.comment}
-                        onChange={handleChange}
-                      ></textarea>
-                    </div>
-                    <div className="w-full md:w-full flex items-start">
-                      <div className="-mr-1">
-                        <button
-                          type="submit"
-                          className="bg-white text-gray-700 font-medium py-1 px-4 border border-gray-400 rounded-lg tracking-wide mr-1 hover:bg-gray-100"
-                          disabled={commentSubmitting}
-                        >
-                          <div className=" flex justify-center items-center space-x-2">
-                            {commentSubmitting ? (
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
-                            ) : (
-                              ''
-                            )}
-                            <p>Post Comment</p>
-                          </div>
-                        </button>
+              {user ? (
+                userCommented ? (
+                  <p>You have already commented on this course!</p>
+                ) : (
+                  <form
+                    className="w-full max-w-xl bg-white rounded-lg"
+                    method="POST"
+                    onSubmit={handleCommentSubmit}
+                  >
+                    <div className="flex flex-wrap -mx-3 mb-6">
+                      <div className="w-full md:w-full mb-2 mt-2">
+                        <textarea
+                          className="bg-gray-100 rounded border border-gray-400 leading-normal resize-none w-full h-20 font-medium placeholder-gray-700 focus:outline-none focus:bg-white"
+                          name="comment"
+                          placeholder="Type Your Comment"
+                          required
+                          value={inputs.comment}
+                          onChange={handleChange}
+                        ></textarea>
+                      </div>
+                      <div className="w-full md:w-full flex items-start">
+                        <div className="-mr-1">
+                          <button
+                            type="submit"
+                            className="bg-white text-gray-700 font-medium py-1 px-4 border border-gray-400 rounded-lg tracking-wide mr-1 hover:bg-gray-100"
+                            disabled={commentSubmitting}
+                          >
+                            <div className=" flex justify-center items-center space-x-2">
+                              {commentSubmitting ? (
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
+                              ) : (
+                                ''
+                              )}
+                              <p>Post Comment</p>
+                            </div>
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </form>
+                  </form>
+                )
+              ) : (
+                <p>Log In to comment</p>
               )}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 m-10 gap-4 pb-10">

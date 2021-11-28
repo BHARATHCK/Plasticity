@@ -48,13 +48,12 @@ function Explore() {
             category={course.category}
             thumbnail={course.thumbnail || ''}
             title={course.title}
-            publishedDate={new Date().toISOString()}
             description={course.description}
             id={course.id}
           />
         ))}
       </div>
-      <div className="items-center flex flex-row text-center justify-center">
+      <div className="items-center flex flex-row text-center justify-center mb-10">
         <button
           type="submit"
           onClick={fetchMoreCourses}

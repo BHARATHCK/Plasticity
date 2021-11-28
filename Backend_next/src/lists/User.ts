@@ -3,6 +3,12 @@ import { relationship, text , select , password, checkbox } from '@keystone-next
 
 export const User = list({
     ui: {
+        isHidden: ({session}) => {
+            if(session.data.isAdmin){
+                return false;
+            }
+            return true;
+        },
         itemView: {
             defaultFieldMode: ({session , item}) => {
                 console.log({session , item})
@@ -13,7 +19,7 @@ export const User = list({
                 }
                 
             }
-          },
+          }
     },
     access: {
         operation: {
@@ -32,7 +38,7 @@ export const User = list({
             update: ({ session, context, listKey, operation ,  }) => {
                 
                 let accessValue = false;
-                if(session.data.isAdmin){
+                if(session.data.isAdmin || session.data.id){
                     accessValue = true;
                 }
                 return accessValue;
@@ -75,6 +81,9 @@ export const User = list({
             ui: {
                 itemView: {
                     fieldMode: ({item , session}) => {
+                        if(session.data.isAdmin){
+                            return "edit";
+                        }
                         return 'hidden';
                     }
                   },
