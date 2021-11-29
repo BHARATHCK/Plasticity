@@ -33,6 +33,13 @@ function Header() {
                   {user.name}
                 </button>
               </NextLink>
+              {user.isEducator ? (
+                <a href={process.env.NEXT_PUBLIC_ADMIN_UI_URL}>
+                  <button className="mt-10 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+                    Educator Dashboard
+                  </button>
+                </a>
+              ) : null}
             </div>
           ) : (
             <>

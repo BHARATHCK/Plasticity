@@ -85,6 +85,12 @@ const UPDATE_COURSE_WATCHED_COUNT_Mut = gql`
   }
 `;
 
+const myLoader = ({ src, width, quality }) => {
+  return `https://res.cloudinary.com/dhmtg163x/image/upload/v1638180653/1481_dvzi5w.gif?w=${width}&q=${
+    quality || 75
+  }`;
+};
+
 function TakeCourse() {
   console.log('COMPONENT RENDERED');
   const router = useRouter();
@@ -156,13 +162,13 @@ function TakeCourse() {
   console.log('User -> ', user);
   if (user?.comment) {
     user.comment.map((comment) => {
-      if (comment.course.id === router.query.id && !userCommented) {
+      if (comment.course?.id === router.query?.id && !userCommented) {
         console.log(comment.course.id + ' -- ' + router.query.id);
         setUserCommented(true);
       }
     });
     user.rating.map((course) => {
-      if (course.id === router.query.id && !userRated) {
+      if (course?.id === router.query?.id && !userRated) {
         userRated(true);
       }
     });
@@ -177,8 +183,7 @@ function TakeCourse() {
               <NextImage
                 src={
                   process.env.NEXT_PUBLIC_S3_PUBLIC_URL +
-                    data?.course?.thumbnail?.filename ||
-                  'https://picsum.photos/seed/picsum/200/300'
+                    data?.course?.thumbnail?.filename || '/loaderImage.gif'
                 }
                 alt="thumbnail of a course"
                 width="270px"

@@ -8,7 +8,7 @@ function RatingComponent({ points }) {
         if (i <= points) {
           return <FilledStar width="30px" height="30px" key={i} />;
         } else {
-          return <StarIcon width="30px" height="30px" />;
+          return <StarIcon width="30px" height="30px" key={i + 1} />;
         }
       })}
     </div>

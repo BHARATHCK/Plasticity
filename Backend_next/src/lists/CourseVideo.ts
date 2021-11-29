@@ -12,7 +12,7 @@ const s3 = new AWS.S3({
 
 export const CourseVideo = list({
   ui: {
-    isHidden: true
+    isHidden: false
   },
   access: {
     operation: {
@@ -22,7 +22,7 @@ export const CourseVideo = list({
         create: ({ session, context, listKey, operation ,  }) => {
             
             let accessValue = false;
-            if(session.data.isEducator){
+            if(session.data.isEducator || session.data.isAdmin){
                 accessValue = true;
             }
             return accessValue;
@@ -34,14 +34,14 @@ export const CourseVideo = list({
             console.log("originalInput " ,originalInput)
             console.log("item " ,item)
             console.log("session " ,session)
-            if(item.authorId === session.itemId){
+            if(item.authorId === session.itemId || session.data.isAdmin){
                 accessValue = true;
             }
             return accessValue;
         },
         delete: async ({context, listKey , operation , item , session}) => {
             let accessValue = false;
-            if(item.authorId === session.itemId){
+            if(item.authorId === session.itemId || session.data.isAdmin){
                 accessValue = true;
             }
             return accessValue;

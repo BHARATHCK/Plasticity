@@ -14,7 +14,7 @@ export const Course = list({
             defaultFieldMode: ({session, item}) => {
                 console.log("SESSION ******** : ", session)
                 console.log("item ******** : ", item)
-                if(session.data.id === item.authorId){
+                if(session.data.id === item.authorId || session.data.isAdmin){
                     return "edit"
                 }
                 return "hidden"
@@ -63,10 +63,50 @@ export const Course = list({
         Videos: relationship({
             ref: 'CourseVideo.Course',
             many: true,
+            ui: {
+                itemView: {
+                    fieldMode: ({item , session}) => {
+                        if(session.data.isAdmin){
+                            return 'edit';
+                        } else {
+                            return 'hidden';
+                        }
+                    }
+                  },
+                  createView: {
+                      fieldMode: ({session}) => {
+                        if(session.data.isAdmin){
+                            return 'edit';
+                        } else {
+                            return 'hidden';
+                        }
+                      }
+                  }
+            }
         }),
         Community: relationship({ref: "Community.Course", many: false }), 
         thumbnail: file({
             isRequired: true,
+            ui: {
+                itemView: {
+                    fieldMode: ({item , session}) => {
+                        if(session.data.isAdmin){
+                            return 'edit';
+                        } else {
+                            return 'hidden';
+                        }
+                    }
+                  },
+                  createView: {
+                      fieldMode: ({session}) => {
+                        if(session.data.isAdmin){
+                            return 'edit';
+                        } else {
+                            return 'hidden';
+                        }
+                      }
+                  }
+            },
             hooks: {
                 validateInput: async ({
                     resolvedData,
@@ -219,7 +259,7 @@ export const Course = list({
                 console.log("item " ,item)
                 console.log("session " ,session)
                 console.log("operation ** : ", operation);
-                if(item.authorId === session.itemId || originalInput?.watchedCount){
+                if(item.authorId === session.itemId || originalInput?.watchedCount || session.data.isAdmin){
                     accessValue = true;
                 }
                 return accessValue;
