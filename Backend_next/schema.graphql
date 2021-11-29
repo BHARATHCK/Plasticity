@@ -324,13 +324,6 @@ input CourseVideoWhereUniqueInput {
   id: ID
 }
 
-type LocalFileFieldOutput implements FileFieldOutput {
-  filename: String!
-  filesize: Int!
-  ref: String!
-  src: String!
-}
-
 input CourseVideoWhereInput {
   AND: [CourseVideoWhereInput!]
   OR: [CourseVideoWhereInput!]
@@ -397,7 +390,7 @@ type Course {
   ): [CourseVideo!]
   VideosCount(where: CourseVideoWhereInput! = {}): Int
   Community: Community
-  thumbnail: String
+  thumbnail: FileFieldOutput
   comment(
     where: CommentWhereInput! = {}
     orderBy: [CommentOrderByInput!]! = []
@@ -418,6 +411,13 @@ enum CourseStatusType {
 
 input CourseWhereUniqueInput {
   id: ID
+}
+
+type LocalFileFieldOutput implements FileFieldOutput {
+  filename: String!
+  filesize: Int!
+  ref: String!
+  src: String!
 }
 
 input CourseWhereInput {
@@ -459,7 +459,7 @@ input CourseUpdateInput {
   author: UserRelateToOneForUpdateInput
   Videos: CourseVideoRelateToManyForUpdateInput
   Community: CommunityRelateToOneForUpdateInput
-  thumbnail: String
+  thumbnail: FileFieldInput
   comment: CommentRelateToManyForUpdateInput
   rating: Int
   ratingCount: Int
@@ -498,7 +498,7 @@ input CourseCreateInput {
   author: UserRelateToOneForCreateInput
   Videos: CourseVideoRelateToManyForCreateInput
   Community: CommunityRelateToOneForCreateInput
-  thumbnail: String
+  thumbnail: FileFieldInput
   comment: CommentRelateToManyForCreateInput
   rating: Int
   ratingCount: Int

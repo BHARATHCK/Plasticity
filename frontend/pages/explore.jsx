@@ -16,7 +16,9 @@ const ALL_COURSES_QUERY = gql`
       author {
         name
       }
-      thumbnail
+      thumbnail {
+        filename
+      }
     }
   }
 `;
@@ -46,7 +48,7 @@ function Explore() {
             key={course.id}
             author={course.author.name}
             category={course.category}
-            thumbnail={course.thumbnail || ''}
+            thumbnail={course?.thumbnail?.filename || ''}
             title={course.title}
             description={course.description}
             id={course.id}

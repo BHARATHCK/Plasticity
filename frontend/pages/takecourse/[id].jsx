@@ -26,7 +26,9 @@ const COURSE_DETAILS = gql`
       author {
         name
       }
-      thumbnail
+      thumbnail {
+        filename
+      }
       Videos {
         video {
           filename
@@ -174,7 +176,8 @@ function TakeCourse() {
             <div>
               <NextImage
                 src={
-                  data?.course?.thumbnail ||
+                  process.env.NEXT_PUBLIC_S3_PUBLIC_URL +
+                    data?.course?.thumbnail?.filename ||
                   'https://picsum.photos/seed/picsum/200/300'
                 }
                 alt="thumbnail of a course"

@@ -18,7 +18,9 @@ const COURSE_DETAILS = gql`
       author {
         name
       }
-      thumbnail
+      thumbnail {
+        filename
+      }
       Videos {
         video {
           filename

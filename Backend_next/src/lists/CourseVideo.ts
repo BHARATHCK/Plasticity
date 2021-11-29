@@ -55,7 +55,7 @@ export const CourseVideo = list({
                 validateInput: async ({
                     resolvedData,
                   }) => { 
-                      console.log("Resolved Data : ",resolvedData.video.filename);
+                      console.log("Resolved Data *************** : ",resolvedData);
                       readFile(process.env.BASE_URL_LOCAL+"\\"+resolvedData.video.filename , (err, data) => {
 
                         if(err) {

@@ -1,5 +1,12 @@
 import { list } from '@keystone-next/keystone';
-import { relationship, text , select, integer, timestamp} from '@keystone-next/keystone/fields';
+import { relationship, text , select, integer, timestamp, file} from '@keystone-next/keystone/fields';
+import {readFile} from 'fs';
+import AWS from 'aws-sdk';
+
+const s3 = new AWS.S3({
+    accessKeyId: process.env.S3_ACCESS_KEY_ID,
+    secretAccessKey: process.env.S3_SECRET
+  })
 
 export const Course = list({
     ui: {
@@ -58,10 +65,34 @@ export const Course = list({
             many: true,
         }),
         Community: relationship({ref: "Community.Course", many: false }), 
-        thumbnail: text({
+        thumbnail: file({
             isRequired: true,
-            ui: {
-                displayMode: 'input'
+            hooks: {
+                validateInput: async ({
+                    resolvedData,
+                  }) => { 
+                      console.log("Resolved Data : ",resolvedData);
+                      readFile(process.env.BASE_URL_LOCAL+"\\"+resolvedData.thumbnail.filename , (err, data) => {
+
+                        if(err) {
+                            console.log(err);
+                        }
+                        console.log("NO ERROR - Probably read the file");
+                        const params = {
+                            Bucket: process.env.S3_BUCKET_NAME || "",
+                            Key: resolvedData.thumbnail.filename.substring(0, resolvedData.thumbnail.filename.indexOf('png')+3),
+                            Body: data
+                          }
+
+                          s3.upload(params, (err: any, data: any) => {
+                            if (err) {
+                              console.log(err)
+                            }
+                            console.log(data.Location)
+                          })
+                      })
+                      
+                  },
             }
         }),
         comment: relationship({
@@ -176,7 +207,7 @@ export const Course = list({
           item : {
               create: async ({context,listKey,operation,originalInput,session}) => {
 
-                if(originalInput.author.connect.id === session.data.id){
+                if(originalInput.author.connect.id === session.data.id || session.data.isAdmin){
                     return true
                 }
 
@@ -198,7 +229,7 @@ export const Course = list({
                 console.log("listKey ******** :",listKey);
                 console.log("item ******** :",item);
                 let accessValue = false;
-                if(item.authorId === session.itemId){
+                if(item.authorId === session.itemId || session.data.isAdmin){
                     accessValue = true;
                 }
                 return accessValue;

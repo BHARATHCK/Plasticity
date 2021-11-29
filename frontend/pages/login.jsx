@@ -71,7 +71,7 @@ function Login() {
   }
 
   if (data?.authenticateUserWithPassword?.item?.id) {
-    router.back();
+    router.push('/explore');
   }
 
   return (

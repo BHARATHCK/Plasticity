@@ -57,7 +57,7 @@ export const Community = list({
           item : {
               create: async ({context,listKey,operation,originalInput,session}) => {
 
-                if(originalInput.author.connect.id === session.data.id){
+                if(originalInput.author.connect.id === session.data.id || session.data.isAdmin){
                     return true
                 }
 

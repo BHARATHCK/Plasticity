@@ -54,7 +54,9 @@ model Course {
   Videos                 CourseVideo[]     @relation("CourseVideo_Course")
   Community              Community?        @relation("Course_Community", fields: [CommunityId], references: [id])
   CommunityId            String?           @map("Community")
-  thumbnail              String?
+  thumbnail_filesize     Int?
+  thumbnail_mode         String?
+  thumbnail_filename     String?
   comment                Comment[]         @relation("Comment_course")
   rating                 Int?
   ratingCount            Int?

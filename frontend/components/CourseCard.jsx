@@ -8,7 +8,7 @@ function CourseCard({ thumbnail, category, title, author, description, id }) {
       <div className="cursor-pointer">
         <div className="max-w-sm min-w-full rounded overflow-hidden shadow-lg">
           <NextImage
-            src={thumbnail}
+            src={process.env.NEXT_PUBLIC_S3_PUBLIC_URL + thumbnail}
             alt="thumbnail of a course"
             width="270px"
             height="150px"

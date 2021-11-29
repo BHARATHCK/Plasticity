@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client';
 import { gql } from 'apollo-client-preset';
 import React from 'react';
-import CourseCard from '../components/CourseCard';
+import CommunityCard from '../components/CommunityCard';
 import Wrapper from '../components/Wrapper';
 
 const GET_ALL_COMMUNITIES = gql`
@@ -12,7 +12,9 @@ const GET_ALL_COMMUNITIES = gql`
       description
       Course {
         title
-        thumbnail
+        thumbnail {
+          filename
+        }
       }
       author {
         name
@@ -38,16 +40,16 @@ function Community() {
   return (
     <Wrapper>
       <div className="flex justify-center">
-        <div className="flex flex-col justify-center content-center">
+        <div className="flex flex-col justify-center content-center mb-8">
           <div>Hi there! 👋 Welcome to the Plasticity community</div>
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 justify-items-center mb-20">
         {data?.communities.map((community) => (
-          <CourseCard
+          <CommunityCard
             key={community.id}
             author={community.author.name}
-            thumbnail={community.Course[0].thumbnail || ''}
+            thumbnail={community?.Course[0]?.thumbnail?.filename || ''}
             title={community.Course[0].title}
             description={community.description}
             id={community.id}
